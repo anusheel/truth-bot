@@ -35,10 +35,9 @@ jobs:
       - name: Wait for the file to become available
         run: sleep 5
 
-      - name: Fetch PDF Attachment with Retry
+      - name: Fetch PDF Attachment with Node.js
         id: fetch_pdf
         run: |
-          echo "Issue body: ${{ github.event.issue.body }}"
           ATTACHMENT_URL=$(echo "${{ github.event.issue.body }}" | grep -Eo 'https://[^ ]+\.pdf' || true)
           if [ -z "$ATTACHMENT_URL" ]; then
             echo "No PDF URL found in the issue body."
@@ -46,22 +45,12 @@ jobs:
             exit 0
           fi
 
-          for i in {1..5}; do
-            echo "Attempt $i to download PDF... $ATTACHMENT_URL"
-            curl -L -D headers.txt -o issue.pdf "$ATTACHMENT_URL"
-            if [ $? -eq 0 ] && grep -q '200 OK' headers.txt; then
-              echo "Successfully downloaded PDF."
-              file issue.pdf
-              echo "PDF_PATH=issue.pdf" >> $GITHUB_OUTPUT
-              exit 0
-            fi
-            echo "PDF not available yet. Retrying in 5 seconds..."
-            sleep 5
-          done
-
-          echo "Error: Unable to download PDF after multiple attempts."
-          exit 1
-
+          echo "Downloading attachment using Node.js... $ATTACHMENT_URL"
+          node dist/fetch_attachment.js "$ATTACHMENT_URL" issue.pdf
+          echo "PDF_PATH=issue.pdf" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
 
       - name: Build TypeScript
         run: npm run build
