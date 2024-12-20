@@ -20,7 +20,7 @@ jobs:
         id: issue
         run: |
           ISSUE_BODY=$(echo "${{ github.event.issue.body }}" | base64 | tr -d '\n' | tr -d '\r')
-    echo "ISSUE_BODY=$ISSUE_BODY" >> $GITHUB_OUTPUT
+          echo "ISSUE_BODY=$ISSUE_BODY" >> $GITHUB_OUTPUT
 
       - name: Install dependencies
         run: npm install
