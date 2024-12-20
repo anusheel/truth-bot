@@ -12,15 +12,15 @@ export async function extractTextWithPdftotext(pdfPath: string): Promise<string>
 
   // Print file stats
   const stats = fs.statSync(pdfPath);
-  console.log(`File Size: ${stats.size} bytes`);
+  // console.log(`File Size: ${stats.size} bytes`);
   let first100Bytes;
 
   // Print first 100 bytes of the file for inspection
   try {
     const fileBuffer = fs.readFileSync(pdfPath);
     first100Bytes = fileBuffer.toString("utf8", 0, Math.min(fileBuffer.length, 100));
-    console.log("First 100 bytes of file:");
-    console.log(first100Bytes);
+    // console.log("First 100 bytes of file:");
+    // console.log(first100Bytes);
   } catch (readError) {
     console.error("Error reading first 100 bytes:", 
       readError instanceof Error ? readError.message : String(readError));
@@ -30,7 +30,7 @@ export async function extractTextWithPdftotext(pdfPath: string): Promise<string>
   let fileTypeResult;
   try {
     fileTypeResult = await execPromise(`file --brief --mime-type "${pdfPath}"`);
-    console.log(`File Type: ${fileTypeResult.stdout.trim()}`);
+    // console.log(`File Type: ${fileTypeResult.stdout.trim()}`);
   } catch (fileTypeError) {
     console.error("Error determining file type:", 
       fileTypeError instanceof Error ? fileTypeError.message : String(fileTypeError));
