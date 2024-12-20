@@ -1,30 +1,36 @@
-import fs from 'fs';
-// Import the `getDocument` function from pdfjs-dist
-// The legacy build is often recommended for Node environments.
-import pdfjs from 'pdfjs-dist';
-const { getDocument } = pdfjs;
+import { exec } from "child_process";
+import fs from "fs";
+import path from "path";
 
-export async function extractTextWithPDFjs(pdfPath: string): Promise<string> {
-  if (!fs.existsSync(pdfPath)) {
-    console.log("PDF file does not exist:", pdfPath);
-    return "";
-  }
+export async function extractTextWithPdftotext(pdfPath: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!fs.existsSync(pdfPath)) {
+      return reject(new Error("PDF file does not exist"));
+    }
 
-  const rawData = new Uint8Array(fs.readFileSync(pdfPath));
-  const loadingTask = getDocument({ data: rawData });
+    const outputTxtPath = `${path.basename(pdfPath, ".pdf")}.txt`;
 
-  // Load the PDF
-  const pdf = await loadingTask.promise;
-  let extractedText = "";
+    // Run the `pdftotext` command
+    exec(`pdftotext "${pdfPath}" "${outputTxtPath}"`, (error, stdout, stderr) => {
+      if (error) {
+        return reject(new Error(`Error running pdftotext: ${stderr || error.message}`));
+      }
 
-  // Iterate through all pages
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    // Extract and concatenate text from the page
-    const pageText = content.items.map(item => (item as any).str).join(' ');
-    extractedText += pageText + "\n";
-  }
+      // Read the extracted text
+      fs.readFile(outputTxtPath, "utf8", (err, data) => {
+        if (err) {
+          return reject(new Error(`Error reading output text file: ${err.message}`));
+        }
 
-  return extractedText.trim();
+        // Clean up the temporary text file
+        fs.unlink(outputTxtPath, (unlinkErr) => {
+          if (unlinkErr) {
+            console.error(`Warning: Unable to delete temp file: ${unlinkErr.message}`);
+          }
+        });
+
+        resolve(data.trim());
+      });
+    });
+  });
 }

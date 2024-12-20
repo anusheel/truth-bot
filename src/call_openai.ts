@@ -1,6 +1,6 @@
-import fetch from 'node-fetch';
-import fs from 'fs';
-import { extractTextWithPDFjs } from './extract_pdf.js';
+import fetch from "node-fetch";
+import fs from "fs";
+import { extractTextWithPdftotext } from "./extract_pdf";
 
 interface OpenAIResponse {
   choices: {
@@ -26,13 +26,13 @@ async function main() {
   }
 
   // Decode the base64-encoded prompt
-  const prompt = Buffer.from(base64Prompt, 'base64').toString('utf8');
+  const prompt = Buffer.from(base64Prompt, "base64").toString("utf8");
   let pdfText = "";
 
   // Extract text if a valid PDF is provided
   if (pdfPath && pdfPath.trim() !== "" && fs.existsSync(pdfPath)) {
     try {
-      pdfText = await extractTextWithPDFjs(pdfPath);
+      pdfText = await extractTextWithPdftotext(pdfPath);
     } catch (error) {
       console.error("Error reading PDF:", error);
       process.exit(1);
@@ -46,20 +46,20 @@ async function main() {
     ? `${prompt}\n\n---\n\nExtracted PDF Content:\n${pdfText}`
     : prompt;
 
-  const apiUrl = 'https://api.openai.com/v1/chat/completions';
+  const apiUrl = "https://api.openai.com/v1/chat/completions";
   const requestBody = {
-    model: 'gpt-4',
-    messages: [{ role: 'user', content: combinedPrompt }],
+    model: "gpt-4",
+    messages: [{ role: "user", content: combinedPrompt }],
     max_tokens: 16000,
     temperature: 0.7,
   };
 
   try {
     const response = await fetch(apiUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify(requestBody),
     });
@@ -70,7 +70,7 @@ async function main() {
 
     const data = (await response.json()) as OpenAIResponse;
     const completion = data.choices?.[0]?.message?.content || "No response from the model.";
-    process.stdout.write(completion.replace(/\r?\n/g, ' ').trim());
+    process.stdout.write(completion.replace(/\r?\n/g, " ").trim());
   } catch (error: any) {
     console.error("Error calling OpenAI:", error);
     process.exit(1);
