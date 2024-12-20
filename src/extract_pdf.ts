@@ -14,15 +14,28 @@ export async function extractTextWithPdftotext(pdfPath: string): Promise<string>
       // Print file stats
       const stats = fs.statSync(pdfPath);
       console.log(`File Size: ${stats.size} bytes`);
-      
+
       // Print first 100 bytes of the file for inspection
-      const fileContents = fs.readFileSync(pdfPath).toString("utf8", 0, 100);
-      console.log("First 100 bytes of file:");
-      console.log(fileContents);
+      try {
+        const fileBuffer = fs.readFileSync(pdfPath);
+        const first100Bytes = fileBuffer.toString("utf8", 0, Math.min(fileBuffer.length, 100));
+        console.log("First 100 bytes of file:");
+        console.log(first100Bytes);
+      } catch (readError) {
+        console.error("Error reading first 100 bytes:", 
+          readError instanceof Error ? readError.message : String(readError));
+      }
 
       // Validate the file type
-      const fileTypeResult = await execPromise(`file --brief --mime-type "${pdfPath}"`);
-      console.log(`File Type: ${fileTypeResult.stdout.trim()}`);
+      let fileTypeResult;
+      try {
+        fileTypeResult = await execPromise(`file --brief --mime-type "${pdfPath}"`);
+        console.log(`File Type: ${fileTypeResult.stdout.trim()}`);
+      } catch (fileTypeError) {
+        console.error("Error determining file type:", 
+          fileTypeError instanceof Error ? fileTypeError.message : String(fileTypeError));
+        return reject(new Error("Could not determine file type"));
+      }
 
       if (!fileTypeResult.stdout.trim().startsWith("application/pdf")) {
         return reject(new Error("File is not a valid PDF"));
@@ -52,8 +65,10 @@ export async function extractTextWithPdftotext(pdfPath: string): Promise<string>
           resolve(data.trim());
         });
       });
-    } catch (error:any) {
-      reject(new Error(`Error processing file: ${error.message}`));
+    } catch (error) {
+      reject(new Error(`Error processing file: ${
+        error instanceof Error ? error.message : String(error)
+      }`));
     }
   });
 }
