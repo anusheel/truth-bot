@@ -1,0 +1,45 @@
+name: Issue Opened - Call OpenAI
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  run-openai:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: Extract issue details
+        id: issue
+        run: |
+          echo "ISSUE_BODY=$(echo "${{ github.event.issue.body }}" | base64)" >> $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Call OpenAI
+        id: openai_call
+        run: |
+          RESPONSE=$(node dist/call_openai.js "${{ env.OPENAI_API_KEY }}" "${{ steps.issue.outputs.ISSUE_BODY }}")
+          echo "response=$RESPONSE" >> $GITHUB_OUTPUT
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Comment on the issue
+        uses: peter-evans/create-issue-comment@v3
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            **OpenAI Response:**
+            ${{ steps.openai_call.outputs.response }}
