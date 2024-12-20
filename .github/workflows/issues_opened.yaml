@@ -31,6 +31,9 @@ jobs:
           ISSUE_BODY=$(echo "${{ github.event.issue.body }}" | base64 | tr -d '\n' | tr -d '\r')
           echo "ISSUE_BODY=$ISSUE_BODY" >> $GITHUB_OUTPUT
 
+      - name: Wait for the file to become available
+        run: sleep 5
+
       - name: Fetch PDF Attachment
         id: fetch_pdf
         run: |
