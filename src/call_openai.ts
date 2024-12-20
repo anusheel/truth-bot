@@ -26,9 +26,9 @@ async function main() {
 
   const apiUrl = 'https://api.openai.com/v1/chat/completions';
   const requestBody = {
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4o',
     messages: [{ role: 'user', content: prompt }],
-    max_tokens: 150,
+    max_tokens: 125000,
     temperature: 0.7
   };
 
