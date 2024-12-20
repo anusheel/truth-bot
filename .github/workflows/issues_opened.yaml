@@ -10,11 +10,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-      
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Extract issue details
         id: issue
@@ -22,8 +25,16 @@ jobs:
           ISSUE_BODY=$(echo "${{ github.event.issue.body }}" | base64 | tr -d '\n' | tr -d '\r')
           echo "ISSUE_BODY=$ISSUE_BODY" >> $GITHUB_OUTPUT
 
-      - name: Install dependencies
-        run: npm install
+      - name: Fetch PDF Attachment
+        id: fetch_pdf
+        run: |
+          ATTACHMENT_URL=$(echo "${{ github.event.issue.body }}" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*\.pdf')
+          if [ -n "$ATTACHMENT_URL" ]; then
+            curl -L "$ATTACHMENT_URL" --output issue.pdf
+            echo "PDF_PATH=issue.pdf" >> $GITHUB_OUTPUT
+          else
+            echo "PDF_PATH=" >> $GITHUB_OUTPUT
+          fi
 
       - name: Build TypeScript
         run: npm run build
@@ -31,7 +42,16 @@ jobs:
       - name: Call OpenAI
         id: openai_call
         run: |
-          RESPONSE=$(node dist/call_openai.js "${{ env.OPENAI_API_KEY }}" "${{ steps.issue.outputs.ISSUE_BODY }}")
+          if [ -f "${{ steps.fetch_pdf.outputs.PDF_PATH }}" ]; then
+            RESPONSE=$(node dist/call_openai.js \
+              "${{ env.OPENAI_API_KEY }}" \
+              "${{ steps.issue.outputs.ISSUE_BODY }}" \
+              "${{ steps.fetch_pdf.outputs.PDF_PATH }}")
+          else
+            RESPONSE=$(node dist/call_openai.js \
+              "${{ env.OPENAI_API_KEY }}" \
+              "${{ steps.issue.outputs.ISSUE_BODY }}" "")
+          fi
           echo "response=$RESPONSE" >> $GITHUB_OUTPUT
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

@@ -1,4 +1,6 @@
 import fetch from 'node-fetch';
+import fs from 'fs';
+import pdfParse from 'pdf-parse';
 
 interface OpenAIResponse {
   choices: {
@@ -11,6 +13,7 @@ interface OpenAIResponse {
 async function main() {
   const apiKey = process.argv[2];
   const base64Prompt = process.argv[3];
+  const pdfPath = process.argv[4];
 
   if (!apiKey) {
     console.error("Missing OpenAI API key");
@@ -22,12 +25,31 @@ async function main() {
     process.exit(1);
   }
 
+  // Decode the base64-encoded prompt
   const prompt = Buffer.from(base64Prompt, 'base64').toString('utf8');
+  let pdfText = "";
+
+  // Extract text from the PDF if a path is provided
+  if (pdfPath && fs.existsSync(pdfPath)) {
+    try {
+      const pdfBuffer = fs.readFileSync(pdfPath);
+      const pdfData = await pdfParse(pdfBuffer);
+      pdfText = pdfData.text;
+    } catch (error) {
+      console.error("Error reading PDF:", error);
+      process.exit(1);
+    }
+  }
+
+  // Combine the prompt with the extracted PDF content, if any
+  const combinedPrompt = pdfText
+    ? `${prompt}\n\n---\n\nExtracted PDF Content:\n${pdfText}`
+    : prompt;
 
   const apiUrl = 'https://api.openai.com/v1/chat/completions';
   const requestBody = {
     model: 'gpt-4o',
-    messages: [{ role: 'user', content: prompt }],
+    messages: [{ role: 'user', content: combinedPrompt }],
     max_tokens: 16000,
     temperature: 0.7
   };
@@ -51,8 +73,9 @@ async function main() {
 
     const completion = data.choices?.[0]?.message?.content || "No response from the model.";
 
+    // Print the OpenAI response
     process.stdout.write(completion.replace(/\r?\n/g, ' ').trim());
-} catch (error: any) {
+  } catch (error: any) {
     console.error('Error calling OpenAI:', error);
     process.exit(1);
   }
