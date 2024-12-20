@@ -21,7 +21,8 @@ export async function extractTextWithPdftotext(pdfPath: string): Promise<string>
     console.log("First 100 bytes of file:");
     console.log(first100Bytes);
   } catch (readError) {
-    console.error("Error reading first 100 bytes:", readError.message);
+    console.error("Error reading first 100 bytes:", 
+      readError instanceof Error ? readError.message : String(readError));
   }
 
   // Validate the file type
@@ -30,7 +31,8 @@ export async function extractTextWithPdftotext(pdfPath: string): Promise<string>
     fileTypeResult = await execPromise(`file --brief --mime-type "${pdfPath}"`);
     console.log(`File Type: ${fileTypeResult.stdout.trim()}`);
   } catch (fileTypeError) {
-    console.error("Error determining file type:", fileTypeError.message);
+    console.error("Error determining file type:", 
+      fileTypeError instanceof Error ? fileTypeError.message : String(fileTypeError));
     throw new Error("Could not determine file type");
   }
 
