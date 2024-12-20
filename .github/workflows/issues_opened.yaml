@@ -19,7 +19,8 @@ jobs:
       - name: Extract issue details
         id: issue
         run: |
-          echo "ISSUE_BODY=$(echo "${{ github.event.issue.body }}" | base64)" >> $GITHUB_OUTPUT
+        ISSUE_BODY=$(echo "${{ github.event.issue.body }}" | base64 | tr -d '\n' | tr -d '\r')
+    echo "ISSUE_BODY=$ISSUE_BODY" >> $GITHUB_OUTPUT
 
       - name: Install dependencies
         run: npm install
