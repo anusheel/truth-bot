@@ -28,7 +28,7 @@ jobs:
       - name: Fetch PDF Attachment
         id: fetch_pdf
         run: |
-          ATTACHMENT_URL=$(echo "${{ github.event.issue.body }}" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*\.pdf')
+          ATTACHMENT_URL=$(echo "${{ github.event.issue.body }}" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*\\.pdf' || true)
 
           if [ -n "$ATTACHMENT_URL" ]; then
             echo "Found PDF URL: $ATTACHMENT_URL"
