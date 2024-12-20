@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
-import PDFParser from 'pdf2json';
+import { extractTextWithPDFjs } from './extract_pdf';
 
 interface OpenAIResponse {
   choices: {
@@ -8,30 +8,6 @@ interface OpenAIResponse {
       content: string;
     };
   }[];
-}
-
-async function extractTextFromPDF(pdfPath: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    if (!fs.existsSync(pdfPath)) {
-      return resolve("");
-    }
-
-    const pdfParser = new PDFParser();
-    pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
-    pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
-      let extractedText = "";
-      pdfData.formImage.Pages.forEach((page: any) => {
-        page.Texts.forEach((textObj: any) => {
-          const textChunk = textObj.R.map((r: any) => decodeURIComponent(r.T)).join("");
-          extractedText += textChunk + " ";
-        });
-        extractedText += "\n";
-      });
-      resolve(extractedText.trim());
-    });
-
-    pdfParser.loadPDF(pdfPath);
-  });
 }
 
 async function main() {
@@ -56,7 +32,7 @@ async function main() {
   // Extract text if a valid PDF is provided
   if (pdfPath && pdfPath.trim() !== "" && fs.existsSync(pdfPath)) {
     try {
-      pdfText = await extractTextFromPDF(pdfPath);
+      pdfText = await extractTextWithPDFjs(pdfPath);
     } catch (error) {
       console.error("Error reading PDF:", error);
       process.exit(1);
