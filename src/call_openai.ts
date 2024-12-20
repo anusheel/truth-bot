@@ -81,7 +81,19 @@ async function main() {
     const cleanRequestBody = {
       model: "gpt-4o",
       messages: [
-        { role: "user", content: `Clean and format the following into clean and readable markdown for a GitHub comment. Any equations should render correctly in a github comment. Only return the markdown without any quotes or explanations:\n\n${completion}` },
+        { role: "user", content: `I want to create a detailed GitHub comment with clean, readable Markdown formatting. The content should include:
+
+Headers using proper Markdown syntax (#, ##, ### for H1, H2, H3).
+Bullet points and numbered lists for easy readability.
+Inline and block equations formatted using LaTeX syntax for GitHub's Markdown compatibility (e.g., inline equations with $...$ and block equations with $$...$$).
+Tables formatted in Markdown, if necessary.
+Indented code blocks for any example text or formulas that need to stand out.
+Here is the text to format:
+\n\n${completion}\n
+Ensure the final output is concise and uses proper Markdown syntax that renders correctly on GitHub. Equations like $a^2 + b^2 = c^2$ or $$\text{E} = mc^2$$ should be properly enclosed for correct rendering.
+
+If anything seems ambiguous in the input, prioritize clarity and a professional tone.
+` },
       ],
     };
 
