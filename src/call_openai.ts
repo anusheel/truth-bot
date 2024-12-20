@@ -26,7 +26,7 @@ async function main() {
 
   const apiUrl = 'https://api.openai.com/v1/chat/completions';
   const requestBody = {
-    model: 'gpt-o1',
+    model: 'gpt-o1-preview',
     messages: [{ role: 'user', content: prompt }],
     max_tokens: 16000,
     temperature: 0.7
