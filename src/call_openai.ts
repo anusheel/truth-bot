@@ -54,7 +54,6 @@ async function main() {
   const requestBody = {
     model: "o1-preview",
     messages: [{ role: "user", content: combinedPrompt }],
-    max_completion_tokens: 2048
   };
 
   try {
