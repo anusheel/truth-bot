@@ -26,7 +26,11 @@ async function main() {
   }
 
   // Decode the base64-encoded prompt
-  const prompt = Buffer.from(base64Prompt, "base64").toString("utf8");
+  let prompt = Buffer.from(base64Prompt, "base64").toString("utf8");
+
+  // Remove URLs from the prompt
+  prompt = prompt.replace(/https?:\/\/\S+/g, "").trim();
+
   let pdfText = "";
 
   // Extract text if a valid PDF is provided
@@ -43,7 +47,7 @@ async function main() {
 
   // Combine the prompt with the extracted PDF content, if any
   const combinedPrompt = pdfText
-    ? `${prompt}\n\n---\n\nExtracted PDF Content:\n${pdfText}`
+    ? `${prompt}\n\n---\n${pdfText}`
     : prompt;
 
   const apiUrl = "https://api.openai.com/v1/chat/completions";
