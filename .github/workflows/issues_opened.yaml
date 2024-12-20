@@ -35,6 +35,9 @@ jobs:
       - name: Wait for the file to become available
         run: sleep 5
 
+      - name: Build TypeScript
+        run: npm run build
+
       - name: Fetch PDF Attachment with Node.js
         id: fetch_pdf
         run: |
@@ -51,9 +54,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-
-      - name: Build TypeScript
-        run: npm run build
 
       - name: Call OpenAI
         id: openai_call
