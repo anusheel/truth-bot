@@ -103,7 +103,7 @@ async function main() {
     const cleanCompletion = cleanData.choices?.[0]?.message?.content || "No response from the model.";
 
     // console.log("Cleaned and formatted response for GitHub:");
-    process.stdout.write(cleanCompletion);
+    process.stdout.write(cleanCompletion.replace(/\r?\n/g, " ").trim());
 
   } catch (error: any) {
     console.error(`Error during API calls:`, error);
