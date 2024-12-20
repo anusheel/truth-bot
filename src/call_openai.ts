@@ -46,6 +46,7 @@ async function main() {
     ? `${prompt}\n\n---\n\nExtracted PDF Content:\n${pdfText}`
     : prompt;
 
+  console.log(`${combinedPrompt}`);
   const apiUrl = "https://api.openai.com/v1/chat/completions";
   const requestBody = {
     model: "gpt-4",
