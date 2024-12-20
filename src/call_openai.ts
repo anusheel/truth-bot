@@ -28,7 +28,7 @@ async function main() {
   const requestBody = {
     model: 'gpt-4o',
     messages: [{ role: 'user', content: prompt }],
-    max_tokens: 4096,
+    max_tokens: 16000,
     temperature: 0.7
   };
 
