@@ -13,11 +13,12 @@ export async function extractTextWithPdftotext(pdfPath: string): Promise<string>
   // Print file stats
   const stats = fs.statSync(pdfPath);
   console.log(`File Size: ${stats.size} bytes`);
+  let first100Bytes;
 
   // Print first 100 bytes of the file for inspection
   try {
     const fileBuffer = fs.readFileSync(pdfPath);
-    const first100Bytes = fileBuffer.toString("utf8", 0, Math.min(fileBuffer.length, 100));
+    first100Bytes = fileBuffer.toString("utf8", 0, Math.min(fileBuffer.length, 100));
     console.log("First 100 bytes of file:");
     console.log(first100Bytes);
   } catch (readError) {
@@ -37,7 +38,7 @@ export async function extractTextWithPdftotext(pdfPath: string): Promise<string>
   }
 
   if (!fileTypeResult.stdout.trim().startsWith("application/pdf")) {
-    throw new Error("File is not a valid PDF");
+    throw new Error(`File is not a valid PDF ${fileTypeResult.stdout.trim()} ${first100Bytes}`);
   }
 
   // Wrap the `pdftotext` command execution in a Promise
