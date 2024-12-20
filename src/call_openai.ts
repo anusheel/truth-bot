@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
-const pdfParse = require('pdf-parse');
+import pdfParse from 'pdf-parse';
 
 interface OpenAIResponse {
   choices: {
