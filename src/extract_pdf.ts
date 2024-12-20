@@ -1,7 +1,7 @@
 import fs from 'fs';
 // Import the `getDocument` function from pdfjs-dist
 // The legacy build is often recommended for Node environments.
-import { getDocument } from 'pdfjs-dist/legacy/build/pdf.js';
+import { getDocument } from 'pdfjs-dist';
 
 export async function extractTextWithPDFjs(pdfPath: string): Promise<string> {
   if (!fs.existsSync(pdfPath)) {
