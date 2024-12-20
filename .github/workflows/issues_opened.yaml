@@ -16,6 +16,9 @@ jobs:
         with:
           node-version: '18.x'
 
+      - name: Clean install dependencies
+        run: npm ci
+
       - name: Install dependencies
         run: npm install
 
@@ -52,11 +55,13 @@ jobs:
         id: openai_call
         run: |
           if [ -n "${{ steps.fetch_pdf.outputs.PDF_PATH }}" ]; then
+            echo "PDF file path: ${{ steps.fetch_pdf.outputs.PDF_PATH }}"
             RESPONSE=$(node dist/call_openai.js \
               "${{ env.OPENAI_API_KEY }}" \
               "${{ steps.issue.outputs.ISSUE_BODY }}" \
               "${{ steps.fetch_pdf.outputs.PDF_PATH }}")
           else
+            echo "No PDF file provided. Proceeding with prompt only."
             RESPONSE=$(node dist/call_openai.js \
               "${{ env.OPENAI_API_KEY }}" \
               "${{ steps.issue.outputs.ISSUE_BODY }}" "")

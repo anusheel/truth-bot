@@ -40,9 +40,9 @@ async function main() {
       process.exit(1);
     }
   } else {
-    console.log("No valid PDF path provided. Proceeding without PDF content.");
+    console.log("No valid PDF path provided. Skipping PDF content.");
   }
-
+  
   // Combine the prompt with the extracted PDF content, if any
   const combinedPrompt = pdfText
     ? `${prompt}\n\n---\n\nExtracted PDF Content:\n${pdfText}`
