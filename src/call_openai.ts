@@ -81,7 +81,7 @@ async function main() {
     const cleanRequestBody = {
       model: "gpt-4o",
       messages: [
-        { role: "user", content: `Clean and format the following text for a GitHub comment:\n\n${completion}` },
+        { role: "user", content: `Clean and format the following into clean and readable markdown for a GitHub comment. Any equations should render in a github comment. Only return the markdown:\n\n${completion}` },
       ],
     };
 
