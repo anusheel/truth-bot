@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
-import pdfParse from 'pdf-parse';
+import PDFParser from 'pdf2json';
 
 interface OpenAIResponse {
   choices: {
@@ -8,6 +8,30 @@ interface OpenAIResponse {
       content: string;
     };
   }[];
+}
+
+async function extractTextFromPDF(pdfPath: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!fs.existsSync(pdfPath)) {
+      return resolve("");
+    }
+
+    const pdfParser = new PDFParser();
+    pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
+    pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
+      let extractedText = "";
+      pdfData.formImage.Pages.forEach((page: any) => {
+        page.Texts.forEach((textObj: any) => {
+          const textChunk = textObj.R.map((r: any) => decodeURIComponent(r.T)).join("");
+          extractedText += textChunk + " ";
+        });
+        extractedText += "\n";
+      });
+      resolve(extractedText.trim());
+    });
+
+    pdfParser.loadPDF(pdfPath);
+  });
 }
 
 async function main() {
@@ -29,12 +53,10 @@ async function main() {
   const prompt = Buffer.from(base64Prompt, 'base64').toString('utf8');
   let pdfText = "";
 
-  // Handle missing or invalid PDF paths
+  // Extract text if a valid PDF is provided
   if (pdfPath && pdfPath.trim() !== "" && fs.existsSync(pdfPath)) {
     try {
-      const pdfBuffer = fs.readFileSync(pdfPath);
-      const pdfData = await pdfParse(pdfBuffer);
-      pdfText = pdfData.text;
+      pdfText = await extractTextFromPDF(pdfPath);
     } catch (error) {
       console.error("Error reading PDF:", error);
       process.exit(1);
@@ -42,7 +64,7 @@ async function main() {
   } else {
     console.log("No valid PDF path provided. Skipping PDF content.");
   }
-  
+
   // Combine the prompt with the extracted PDF content, if any
   const combinedPrompt = pdfText
     ? `${prompt}\n\n---\n\nExtracted PDF Content:\n${pdfText}`
@@ -50,7 +72,7 @@ async function main() {
 
   const apiUrl = 'https://api.openai.com/v1/chat/completions';
   const requestBody = {
-    model: 'gpt-4o',
+    model: 'gpt-4',
     messages: [{ role: 'user', content: combinedPrompt }],
     max_tokens: 16000,
     temperature: 0.7,
