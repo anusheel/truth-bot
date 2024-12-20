@@ -31,18 +31,12 @@ jobs:
       - name: Fetch PDF Attachment
         id: fetch_pdf
         run: |
-          ATTACHMENT_URL=$(echo "${{ github.event.issue.body }}" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*\\.pdf' || true)
-
+          echo "${{ github.event.issue.body }}"
+          ATTACHMENT_URL=$(echo "${{ github.event.issue.body }}" | grep -Eo 'https://[^ ]+\.pdf' || true)
           if [ -n "$ATTACHMENT_URL" ]; then
             echo "Found PDF URL: $ATTACHMENT_URL"
-            if curl -L "$ATTACHMENT_URL" --output issue.pdf; then
-              echo "Successfully downloaded the PDF."
-              echo "PDF_PATH=issue.pdf" >> $GITHUB_OUTPUT
-            else
-              echo "Failed to download the PDF."
-              echo "PDF_PATH=" >> $GITHUB_OUTPUT
-              exit 1
-            fi
+            curl -L "$ATTACHMENT_URL" --output issue.pdf || exit 1
+            echo "PDF_PATH=issue.pdf" >> $GITHUB_OUTPUT
           else
             echo "No PDF URL found in the issue body."
             echo "PDF_PATH=" >> $GITHUB_OUTPUT
