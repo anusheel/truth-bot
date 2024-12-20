@@ -1,17 +1,13 @@
 {
     "compilerOptions": {
-      "strict": true,
-      "typeRoots": [
-        "./types",
-        "./node_modules/@types"
-      ],
+      "rootDir": "src",
       "outDir": "dist",
       "moduleResolution": "node",
-      "esModuleInterop": true,
-      "target": "ES2019",
       "module": "ESNext",
-      "skipLibCheck": true
+      "target": "ES2019",
+      "esModuleInterop": true,
+      "strict": true
     },
     "include": ["src"]
-  }
+}
   

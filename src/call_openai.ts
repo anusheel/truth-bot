@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import fs from "fs";
-import { extractTextWithPdftotext } from "./extract_pdf";
+import { extractTextWithPdftotext } from './extract_pdf.js';
 
 interface OpenAIResponse {
   choices: {
