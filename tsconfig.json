@@ -1,12 +1,12 @@
 {
     "compilerOptions": {
-      "module": "ES2020", 
       "target": "ES2020",
-      "moduleResolution": "Node",
-      "lib": ["ES2020", "DOM"],
+      "module": "CommonJS",
+      "outDir": "dist",
       "strict": true,
       "esModuleInterop": true,
-      "types": ["node"]
+      "moduleResolution": "Node",
+      "lib": ["ES2020", "DOM"]
     },
     "include": ["src"]
   }

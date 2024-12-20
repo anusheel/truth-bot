@@ -1,14 +1,12 @@
 {
-  "name": "truth-bot",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "tsc"
-  },
-  "dependencies": {
-    "node-fetch": "^3.3.1"
-  },
-  "devDependencies": {
-    "@types/node-fetch": "^2.6.12",
-    "typescript": "^5.2.0"
+    "scripts": {
+      "build": "tsc"
+    },
+    "dependencies": {
+      "node-fetch": "^3.3.1"
+    },
+    "devDependencies": {
+      "typescript": "^5.2.0",
+      "@types/node": "^20.4.2"
+    }
   }
-}
