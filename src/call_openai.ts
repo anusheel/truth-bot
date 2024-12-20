@@ -1,5 +1,13 @@
 import fetch from 'node-fetch';
 
+interface OpenAIResponse {
+  choices: {
+    message: {
+      content: string;
+    };
+  }[];
+}
+
 async function main() {
   const apiKey = process.argv[2];
   const base64Prompt = process.argv[3];
@@ -38,10 +46,11 @@ async function main() {
       throw new Error(`OpenAI API request failed: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    // Explicitly type the response
+    const data = (await response.json()) as OpenAIResponse;
+
     const completion = data.choices?.[0]?.message?.content || "No response from the model.";
 
-    // Print only the completion so the workflow can capture it
     process.stdout.write(completion);
   } catch (error: any) {
     console.error('Error calling OpenAI:', error);
