@@ -30,7 +30,8 @@ async function main() {
   let pdfText = "";
 
   // Extract text from the PDF if a path is provided
-  if (pdfPath && fs.existsSync(pdfPath)) {
+  // Ensure the PDF path is not empty and the file exists
+  if (pdfPath && pdfPath.trim() !== "" && fs.existsSync(pdfPath)) {
     try {
       const pdfBuffer = fs.readFileSync(pdfPath);
       const pdfData = await pdfParse(pdfBuffer);
@@ -39,6 +40,8 @@ async function main() {
       console.error("Error reading PDF:", error);
       process.exit(1);
     }
+  } else {
+    console.log("No valid PDF path provided. Proceeding without PDF content.");
   }
 
   // Combine the prompt with the extracted PDF content, if any
