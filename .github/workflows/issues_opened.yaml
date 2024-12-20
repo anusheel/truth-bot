@@ -47,7 +47,7 @@ jobs:
           fi
 
           for i in {1..5}; do
-            echo "Attempt $i to download PDF..."
+            echo "Attempt $i to download PDF... $ATTACHMENT_URL"
             curl -L -D headers.txt -o issue.pdf "$ATTACHMENT_URL"
             if [ $? -eq 0 ] && grep -q '200 OK' headers.txt; then
               echo "Successfully downloaded PDF."
