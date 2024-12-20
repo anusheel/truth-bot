@@ -51,8 +51,8 @@ async function main() {
 
     const completion = data.choices?.[0]?.message?.content || "No response from the model.";
 
-    process.stdout.write(completion);
-  } catch (error: any) {
+    process.stdout.write(completion.replace(/\r?\n/g, ' ').trim());
+} catch (error: any) {
     console.error('Error calling OpenAI:', error);
     process.exit(1);
   }
