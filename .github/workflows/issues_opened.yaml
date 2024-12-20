@@ -77,5 +77,4 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-            **OpenAI Response:**
             ${{ steps.openai_call.outputs.response }}

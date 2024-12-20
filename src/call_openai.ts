@@ -73,9 +73,40 @@ async function main() {
 
     const data = (await response.json()) as OpenAIResponse;
     const completion = data.choices?.[0]?.message?.content || "No response from the model.";
-    process.stdout.write(completion.replace(/\r?\n/g, " ").trim());
+    
+    // console.log("First API call response:");
+    // console.log(completion);
+
+    // Make the second API call to clean the response for GitHub
+    const cleanRequestBody = {
+      model: "gpt-4o",
+      messages: [
+        { role: "user", content: `Clean and format the following text for a GitHub comment:\n\n${completion}` },
+      ],
+    };
+
+    const cleanResponse = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(cleanRequestBody),
+    });
+
+    if (!cleanResponse.ok) {
+      const errorText = await cleanResponse.text();
+      throw new Error(`OpenAI API request for cleaning failed: ${cleanResponse.status} ${cleanResponse.statusText}, Response: ${errorText}`);
+    }
+
+    const cleanData = (await cleanResponse.json()) as OpenAIResponse;
+    const cleanCompletion = cleanData.choices?.[0]?.message?.content || "No response from the model.";
+
+    // console.log("Cleaned and formatted response for GitHub:");
+    process.stdout.write(cleanCompletion);
+
   } catch (error: any) {
-    console.error(`Error with ${pdfText} calling OpenAI:`, error);
+    console.error(`Error during API calls:`, error);
     process.exit(1);
   }
 }
