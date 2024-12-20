@@ -29,8 +29,7 @@ async function main() {
   const prompt = Buffer.from(base64Prompt, 'base64').toString('utf8');
   let pdfText = "";
 
-  // Extract text from the PDF if a path is provided
-  // Ensure the PDF path is not empty and the file exists
+  // Handle missing or invalid PDF paths
   if (pdfPath && pdfPath.trim() !== "" && fs.existsSync(pdfPath)) {
     try {
       const pdfBuffer = fs.readFileSync(pdfPath);
@@ -54,7 +53,7 @@ async function main() {
     model: 'gpt-4o',
     messages: [{ role: 'user', content: combinedPrompt }],
     max_tokens: 16000,
-    temperature: 0.7
+    temperature: 0.7,
   };
 
   try {
@@ -62,24 +61,20 @@ async function main() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'Authorization': `Bearer ${apiKey}`,
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
       throw new Error(`OpenAI API request failed: ${response.status} ${response.statusText}`);
     }
 
-    // Explicitly type the response
     const data = (await response.json()) as OpenAIResponse;
-
     const completion = data.choices?.[0]?.message?.content || "No response from the model.";
-
-    // Print the OpenAI response
     process.stdout.write(completion.replace(/\r?\n/g, ' ').trim());
   } catch (error: any) {
-    console.error('Error calling OpenAI:', error);
+    console.error("Error calling OpenAI:", error);
     process.exit(1);
   }
 }

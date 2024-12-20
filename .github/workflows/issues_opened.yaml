@@ -51,7 +51,7 @@ jobs:
       - name: Call OpenAI
         id: openai_call
         run: |
-          if [ -f "${{ steps.fetch_pdf.outputs.PDF_PATH }}" ]; then
+          if [ -n "${{ steps.fetch_pdf.outputs.PDF_PATH }}" ]; then
             RESPONSE=$(node dist/call_openai.js \
               "${{ env.OPENAI_API_KEY }}" \
               "${{ steps.issue.outputs.ISSUE_BODY }}" \
