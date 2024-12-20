@@ -47,7 +47,7 @@ async function main() {
 
   // Combine the prompt with the extracted PDF content, if any
   const combinedPrompt = pdfText
-    ? `${prompt}\n\n---\n${pdfText}`
+    ? `${prompt}\n\n---\n\nExtracted PDF Content:\n${pdfText}`
     : prompt;
 
   const apiUrl = "https://api.openai.com/v1/chat/completions";
