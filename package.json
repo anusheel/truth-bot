@@ -1,4 +1,7 @@
 {
+    "name": "truth-bot",
+    "version": "1.0.0",
+    "type": "module",
     "scripts": {
       "build": "tsc"
     },
@@ -10,3 +13,4 @@
       "@types/node": "^20.4.2"
     }
   }
+  
