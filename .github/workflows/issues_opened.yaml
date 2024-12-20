@@ -36,7 +36,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Comment on the issue
-        uses: peter-evans/create-issue-comment@v3
+        uses: peter-evans/create-or-update-comment@v4
         with:
           issue-number: ${{ github.event.issue.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
