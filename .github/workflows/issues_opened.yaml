@@ -41,13 +41,21 @@ jobs:
           ATTACHMENT_URL=$(echo "${{ github.event.issue.body }}" | grep -Eo 'https://[^ ]+\.pdf' || true)
           if [ -n "$ATTACHMENT_URL" ]; then
             echo "Found PDF URL: $ATTACHMENT_URL"
-            curl -L -D headers.txt -o issue.pdf "$ATTACHMENT_URL" || exit 1
+            curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -D headers.txt -o issue.pdf "$ATTACHMENT_URL"
+            if [ $? -ne 0 ] || ! grep -q '200 OK' headers.txt; then
+              echo "Error: Unable to download PDF or invalid response (not 200 OK)."
+              exit 1
+            fi
             echo "Response Headers:"
             cat headers.txt
             echo "Downloaded File Details:"
             file issue.pdf
             ls -lh issue.pdf
             head -c 100 issue.pdf | xxd
+            if ! file issue.pdf | grep -q 'PDF document'; then
+              echo "Error: The downloaded file is not a valid PDF."
+              exit 1
+            fi
             echo "PDF_PATH=issue.pdf" >> $GITHUB_OUTPUT
           else
             echo "No PDF URL found in the issue body."
