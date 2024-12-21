@@ -89,18 +89,24 @@ I want to create a detailed GitHub comment with clean, readable Markdown formatt
 1. **All math expressions**—including:
    - Bracketed forms (e.g., [ ... ]),
    - Parenthesized LaTeX (e.g., \( ... \)),
-   - Inline dollar signs ($ ... $),
-   should be converted to **standalone block math** in single dollar signs \`$\` and \`$\`, each on its own line. 
+   - Inline dollar signs with ($ ... $),
+   should be converted to **standalone block math** enclosed in $\` and \`$. 
 
    For example:
    - "\\( E = mc^2 \\" becomes:
-     $\nE = mc^2\n$
+     $\`
+     E = mc^2
+     \`$
    - "[ a^2 + b^2 = c^2 ]" becomes:
-     $\na^2 + b^2 = c^2\n$
+     $\`
+     a^2 + b^2 = c^2
+     \`$
    - " $ d = vt $" becomes:
-     $\nd = vt\n$
+     $\`
+     d = vt
+     \`$
 
-2. Any LateX math expressions should be enclosed in $\` and \`$ delimiters
+2. Any LaTeX math expressions that include \\text and \\frac should be enclosed in $\` and \`$ delimiters.
 
 3. **Headers**, bullet points, and other Markdown remain as usual, but ensure every math expression stands alone in block form.
 
