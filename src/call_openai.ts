@@ -112,7 +112,7 @@ I want to create a detailed GitHub comment with clean, readable Markdown formatt
 
 3. **Headers**, bullet points, and other Markdown remain as usual, but ensure every math expression stands alone in block form.
 
-4. **Do not** include extra quotes or extra explanations in the final output. Return **only** the cleaned Markdown.
+4. **Do not** include extra quotes \`\`\` or the word markdown or extra explanations in the final output. Return **only** the cleaned Markdown.
 
 Here is the text to format:
 
