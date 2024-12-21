@@ -81,7 +81,6 @@ async function main() {
     // console.log(completion);
 
     // Make the second API call to clean the response for GitHub
-
     const cleanRequestBody = {
       model: "gpt-4o",
       messages: [
@@ -89,23 +88,36 @@ async function main() {
           role: "user",
           content: `
 I want to create a detailed GitHub comment with clean, readable Markdown formatting. Specifically:
-- Use headers (H1, H2, H3) with proper Markdown syntax (#, ##, ###).
-- Use bullet points and numbered lists for readability.
-- **Convert any bracketed math expressions** (e.g., [ 7000 , \\text{ng/kg bw/day} \\times 60 , \\text{kg} = 420,000 , \\text{ng/day} ]) into **block math** surrounded by double dollar signs. For example:
-  [ a^2 + b^2 = c^2 ]
-  becomes
-  $$
-  a^2 + b^2 = c^2
-  $$
-- If there are multiple bracketed expressions, **each** one should be placed in its own block math environment, unless they’re meant to be on the same line.
-- Use backslash-escaped LaTeX commands inside the $$...$$ to ensure GitHub markdown compatibility (e.g., \\text{...}).
-- Return the final Markdown without any quotes or additional explanations.
+
+1. **All math expressions**—including:
+   - Bracketed forms (e.g., [ ... ]),
+   - Parenthesized LaTeX (e.g., \\( ... \\)),
+   - Inline dollar signs ($ ... $),
+   should be converted to **standalone block math** in double dollar signs \`$$ ... $$\`, each on its own line. 
+
+   For example:
+   - "\\( E = mc^2 \\)" becomes:
+     $$
+     E = mc^2
+     $$
+   - "[ a^2 + b^2 = c^2 ]" becomes:
+     $$
+     a^2 + b^2 = c^2
+     $$
+   - " $ d = vt $" becomes:
+     $$
+     d = vt
+     $$
+
+2. **Headers**, bullet points, and other Markdown remain as usual, but ensure every math expression stands alone in block form.
+
+3. **Do not** include extra quotes or extra explanations in the final output. Return **only** the cleaned Markdown.
 
 Here is the text to format:
 
 ${completion}
 
-Ensure the final output is concise and properly formatted in Markdown, with math in $$...$$ blocks. If anything is ambiguous, prioritize professional clarity.
+Ensure the final output is concise, uses block-math for every equation, and is suitable for GitHub's Markdown parsing. If anything is ambiguous, prioritize professional clarity.
       `,
         },
       ],
