@@ -91,6 +91,7 @@ async function main() {
 Headers using proper Markdown syntax (#, ##, ### for H1, H2, H3).
 Bullet points and numbered lists for easy readability.
 Inline and block equations formatted using LaTeX syntax for GitHub's Markdown compatibility (e.g., inline equations with $...$ and block equations with $$...$$).
+Use Markdown-Compatible Formatting.
 Tables formatted in Markdown, if necessary.
 Indented code blocks for any example text or formulas that need to stand out.
 Just return the final markdown without any explanation or quotes at the start and end of your output.
