@@ -81,6 +81,7 @@ async function main() {
     // console.log(completion);
 
     // Make the second API call to clean the response for GitHub
+
     const cleanRequestBody = {
       model: "gpt-4o",
       messages: [
@@ -88,23 +89,24 @@ async function main() {
           role: "user",
           content: `I want to create a detailed GitHub comment with clean, readable Markdown formatting. The content should include:
 
-Headers using proper Markdown syntax (#, ##, ### for H1, H2, H3).
-Bullet points and numbered lists for easy readability.
-Inline and block equations formatted using LaTeX syntax for GitHub's Markdown compatibility (e.g., inline equations with $...$ and block equations with $$...$$).
-Use Markdown-Compatible Formatting.
-Tables formatted in Markdown, if necessary.
-Indented code blocks for any example text or formulas that need to stand out.
-Just return the final markdown without any explanation or quotes at the start and end of your output.
-Here is the text to format:
-\n\n${completion}\n
-Ensure the final output is concise and uses proper Markdown syntax that renders correctly on GitHub. Equations like $a^2 + b^2 = c^2$ or $$\text{E} = mc^2$$ should be properly enclosed for correct rendering.
+- Headers (H1, H2, H3) using proper Markdown syntax (#, ##, ###).
+- Bullet points and numbered lists for easy readability.
+- **Math expressions** in standard LaTeX, with inline equations wrapped in single dollar signs (e.g., $E = mc^2$) and block equations in double dollar signs (e.g., $$a^2 + b^2 = c^2$$).
+- Any bracket-style math notation (e.g., [ 7000 , \\text{ng/kg/day} ... ]) should be converted to proper LaTeX syntax.
+- Tables, if needed, should be in Markdown format.
+- Indented code blocks for example text or formulas that need to stand out.
+- Return the final Markdown without any explanation or quotes at the start/end of output.
 
-If anything seems ambiguous in the input, prioritize clarity and a professional tone.
-`,
+Here is the text to format:
+
+${completion}
+
+Ensure the final output is concise, uses proper Markdown, and that math expressions are clearly shown in LaTeX form. If anything is ambiguous, prioritize clarity in a professional tone.`,
         },
       ],
     }
 
+    // Then execute the second API call as before:
     const cleanResponse = await fetch(apiUrl, {
       method: "POST",
       headers: {
