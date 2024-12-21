@@ -93,6 +93,7 @@ Bullet points and numbered lists for easy readability.
 Inline and block equations formatted using LaTeX syntax for GitHub's Markdown compatibility (e.g., inline equations with $...$ and block equations with $$...$$).
 Tables formatted in Markdown, if necessary.
 Indented code blocks for any example text or formulas that need to stand out.
+Just return the final markdown without any explanation or quotes at the start and end of your output.
 Here is the text to format:
 \n\n${completion}\n
 Ensure the final output is concise and uses proper Markdown syntax that renders correctly on GitHub. Equations like $a^2 + b^2 = c^2$ or $$\text{E} = mc^2$$ should be properly enclosed for correct rendering.

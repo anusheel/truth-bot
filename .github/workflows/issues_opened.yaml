@@ -66,7 +66,7 @@ jobs:
               "${{ env.OPENAI_API_KEY }}" \
               "${{ steps.issue.outputs.ISSUE_BODY }}" "")
           fi
-          DECODED_RESPONSE=$(echo "$RESPONSE" | base64 --decode | tr -d '\n' | tr -d '\r')
+          DECODED_RESPONSE=$(echo "$RESPONSE" | base64 --decode)
           echo "response=$DECODED_RESPONSE" >> $GITHUB_OUTPUT
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
