@@ -35,6 +35,16 @@ jobs:
       - name: Build TypeScript
         run: npm run build
 
+      - name: Extract model name
+        id: extract_model
+        run: |
+          MODEL=$(echo "${{ github.event.issue.body }}" | grep -o '#gpt-[a-zA-Z0-9._-]*' | head -n 1 | sed 's/#//')
+          if [ -z "$MODEL" ]; then
+            echo "No model specified. Defaulting to gpt-4."
+            MODEL="gpt-4"
+          fi
+          echo "MODEL=$MODEL" >> $GITHUB_OUTPUT
+
       - name: Fetch PDF Attachment with Node.js
         id: fetch_pdf
         run: |
@@ -59,12 +69,15 @@ jobs:
             RESPONSE=$(node dist/call_openai.js \
               "${{ env.OPENAI_API_KEY }}" \
               "${{ steps.issue.outputs.ISSUE_BODY }}" \
-              "${{ steps.fetch_pdf.outputs.PDF_PATH }}")
+              "${{ steps.fetch_pdf.outputs.PDF_PATH }}" \
+              "${{ steps.extract_model.outputs.MODEL }}")
           else
             echo "No PDF file provided. Proceeding with prompt only."
             RESPONSE=$(node dist/call_openai.js \
               "${{ env.OPENAI_API_KEY }}" \
-              "${{ steps.issue.outputs.ISSUE_BODY }}" "")
+              "${{ steps.issue.outputs.ISSUE_BODY }}" \
+              "" \
+              "${{ steps.extract_model.outputs.MODEL }}")
           fi
           DECODED_RESPONSE=$(echo "$RESPONSE" | base64 --decode)
           echo "response<<EOF" >> $GITHUB_OUTPUT

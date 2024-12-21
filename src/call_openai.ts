@@ -14,6 +14,7 @@ async function main() {
   const apiKey = process.argv[2]
   const base64Prompt = process.argv[3]
   const pdfPath = process.argv[4]
+  const model = process.argv[5] || "gpt-4o"
 
   if (!apiKey) {
     console.error("Missing OpenAI API key")
@@ -52,7 +53,7 @@ async function main() {
 
   const apiUrl = "https://api.openai.com/v1/chat/completions"
   const requestBody = {
-    model: "o1-preview",
+    model: model,
     messages: [{ role: "user", content: combinedPrompt }],
   }
 
