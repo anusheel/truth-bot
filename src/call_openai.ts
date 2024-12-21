@@ -54,6 +54,7 @@ async function main() {
   const apiUrl = "https://api.openai.com/v1/chat/completions"
   const requestBody = {
     model: model,
+    max_completion_tokens: 4096,
     messages: [{ role: "user", content: combinedPrompt }],
   }
 
