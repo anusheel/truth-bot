@@ -35,12 +35,12 @@ jobs:
       - name: Build TypeScript
         run: npm run build
 
-      - name: Extract model name
+      - name: Extract model name from title
         id: extract_model
         run: |
-          MODEL=$(echo "${{ github.event.issue.body }}" | grep -o '#gpt-[a-zA-Z0-9._-]*' | head -n 1 | sed 's/#//')
+          MODEL=$(echo "${{ github.event.issue.title }}" | grep -o '#[a-zA-Z0-9._-]*' | head -n 1 | sed 's/#//')
           if [ -z "$MODEL" ]; then
-            echo "No model specified. Defaulting to gpt-4."
+            echo "No model specified in title. Defaulting to gpt-4."
             MODEL="gpt-4"
           fi
           echo "MODEL=$MODEL" >> $GITHUB_OUTPUT
