@@ -77,9 +77,6 @@ async function main() {
     const completion =
       data.choices?.[0]?.message?.content || "No response from the model."
 
-    // console.log("First API call response:");
-    // console.log(completion);
-
     // Make the second API call to clean the response for GitHub
     const cleanRequestBody = {
       model: "gpt-4o",
@@ -91,25 +88,19 @@ I want to create a detailed GitHub comment with clean, readable Markdown formatt
 
 1. **All math expressions**—including:
    - Bracketed forms (e.g., [ ... ]),
-   - Parenthesized LaTeX (e.g., \\( ... \\)),
+   - Parenthesized LaTeX (e.g., \( ... \)),
    - Inline dollar signs ($ ... $),
-   should be converted to **standalone block math** in double dollar signs \`$$ ... $$\`, each on its own line. 
+   should be converted to **standalone block math** in single dollar signs \`$\` and \`$\`, each on its own line. 
 
    For example:
-   - "\\( E = mc^2 \\)" becomes:
-     $$
-     E = mc^2
-     $$
+   - "\\( E = mc^2 \\" becomes:
+     $\nE = mc^2\n$
    - "[ a^2 + b^2 = c^2 ]" becomes:
-     $$
-     a^2 + b^2 = c^2
-     $$
+     $\na^2 + b^2 = c^2\n$
    - " $ d = vt $" becomes:
-     $$
-     d = vt
-     $$
+     $\nd = vt\n$
 
-2. There should be no Latex tags like \\text \\frac in the final output. Any LateX math expressions should be enclosed in $\` and \`$ delimiters
+2. Any LateX math expressions should be enclosed in $\` and \`$ delimiters
 
 3. **Headers**, bullet points, and other Markdown remain as usual, but ensure every math expression stands alone in block form.
 
@@ -120,7 +111,7 @@ Here is the text to format:
 ${completion}
 
 Ensure the final output is concise, uses block-math for every equation, and is suitable for GitHub's Markdown parsing. If anything is ambiguous, prioritize professional clarity.
-      `,
+          `,
         },
       ],
     }
@@ -145,9 +136,8 @@ Ensure the final output is concise, uses block-math for every equation, and is s
     const cleanCompletion =
       cleanData.choices?.[0]?.message?.content || "No response from the model."
 
-    // console.log("Cleaned and formatted response for GitHub:");
     process.stdout.write(Buffer.from(cleanCompletion).toString("base64"))
-  } catch (error: any) {
+  } catch (error) {
     console.error(`Error during API calls:`, error)
     process.exit(1)
   }
