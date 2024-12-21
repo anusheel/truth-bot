@@ -87,26 +87,30 @@ async function main() {
       messages: [
         {
           role: "user",
-          content: `I want to create a detailed GitHub comment with clean, readable Markdown formatting. The content should include:
-
-- Headers (H1, H2, H3) using proper Markdown syntax (#, ##, ###).
-- Bullet points and numbered lists for easy readability.
-- **Math expressions** in standard LaTeX, with inline equations wrapped in single dollar signs (e.g., $E = mc^2$) and block equations in double dollar signs (e.g., $$a^2 + b^2 = c^2$$).
-- Any bracket-style math notation (e.g., [ 7000 , \\text{ng/kg/day} ... ]) should be converted to proper LaTeX syntax.
-- Tables, if needed, should be in Markdown format.
-- Indented code blocks for example text or formulas that need to stand out.
-- Return the final Markdown without any explanation or quotes at the start/end of output.
+          content: `
+I want to create a detailed GitHub comment with clean, readable Markdown formatting. Specifically:
+- Use headers (H1, H2, H3) with proper Markdown syntax (#, ##, ###).
+- Use bullet points and numbered lists for readability.
+- **Convert any bracketed math expressions** (e.g., [ 7000 , \\text{ng/kg bw/day} \\times 60 , \\text{kg} = 420,000 , \\text{ng/day} ]) into **block math** surrounded by double dollar signs. For example:
+  [ a^2 + b^2 = c^2 ]
+  becomes
+  $$
+  a^2 + b^2 = c^2
+  $$
+- If there are multiple bracketed expressions, **each** one should be placed in its own block math environment, unless they’re meant to be on the same line.
+- Use backslash-escaped LaTeX commands inside the $$...$$ to ensure GitHub markdown compatibility (e.g., \\text{...}).
+- Return the final Markdown without any quotes or additional explanations.
 
 Here is the text to format:
 
 ${completion}
 
-Ensure the final output is concise, uses proper Markdown, and that math expressions are clearly shown in LaTeX form. If anything is ambiguous, prioritize clarity in a professional tone.`,
+Ensure the final output is concise and properly formatted in Markdown, with math in $$...$$ blocks. If anything is ambiguous, prioritize professional clarity.
+      `,
         },
       ],
     }
 
-    // Then execute the second API call as before:
     const cleanResponse = await fetch(apiUrl, {
       method: "POST",
       headers: {
