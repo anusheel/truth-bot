@@ -109,7 +109,7 @@ I want to create a detailed GitHub comment with clean, readable Markdown formatt
      d = vt
      $$
 
-2. There should be no Latex tags like \\text \\frac in the final output.
+2. There should be no Latex tags like \\text \\frac in the final output. Any LateX math expressions should be enclosed in $\` and \`$ delimiters
 
 3. **Headers**, bullet points, and other Markdown remain as usual, but ensure every math expression stands alone in block form.
 
